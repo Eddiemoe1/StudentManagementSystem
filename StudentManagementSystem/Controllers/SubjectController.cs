@@ -63,6 +63,7 @@ namespace StudentManagementSystem.Controllers
             await _dbContext.SaveChangesAsync();
 
             return new SubjectResponse(true, "Subject added successfully.");
+
         }
 
         [HttpPut("{id}")]

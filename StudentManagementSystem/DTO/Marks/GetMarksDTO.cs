@@ -8,7 +8,7 @@ namespace StudentManagementSystem.DTO.Marks
         public Guid StudentSubjectId { get; set; }
 
         public double TotalMark { get; set; }
-        public StudentSubject StudentSubject { get; internal set; }
-        public object TotalMarks { get; internal set; }
+        public string StudentName { get; set; } = string.Empty;
+        public string SubjectName { get; set; } = string.Empty;
     }
 }

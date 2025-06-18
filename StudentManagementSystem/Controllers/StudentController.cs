@@ -5,15 +5,13 @@ using StudentManagementSystem.DTO.Student;
 using StudentManagementSystem.DTO.Subject;
 using StudentManagementSystem.Models.Entities;
 
-
 namespace StudentManagementSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-
     public class StudentController : Controller
     {
-        public readonly ApplicationDbContext _dbContext;
+        private readonly ApplicationDbContext _dbContext;
         public StudentController(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
@@ -35,7 +33,7 @@ namespace StudentManagementSystem.Controllers
                     Address = s.Address,
                     Subjects = s.StudentSubjects.Select(x => new GetSubjectDTO
                     {
-                        Id = x.Subject.Id,
+                        Id = x.Id,
                         Name = x.Subject.Name,
                         Code = x.Subject.Code
                     }).ToList()
@@ -65,7 +63,7 @@ namespace StudentManagementSystem.Controllers
                     Address = s.Address,
                     Subjects = s.StudentSubjects.Select(x => new GetSubjectDTO
                     {
-                        Id = x.Subject.Id,
+                        Id = x.Id,
                         Name = x.Subject.Name,
                         Code = x.Subject.Code
                     }).ToList()
@@ -82,8 +80,14 @@ namespace StudentManagementSystem.Controllers
         }
 
         [HttpPost]
-        public async Task<StudentResponse> AddStudent(AddUpdateStudent addStudentDto)
+        public async Task<IActionResult> AddStudent(AddUpdateStudent addStudentDto)
         {
+            // Validate max 6 subjects
+            if (addStudentDto.SubjectIds != null && addStudentDto.SubjectIds.Count() > 6)
+            {
+                return BadRequest("A student cannot have more than 6 subjects.");
+            }
+
             var studentEntity = new Student()
             {
                 Id = Guid.NewGuid(),
@@ -91,61 +95,70 @@ namespace StudentManagementSystem.Controllers
                 LastName = addStudentDto.LastName,
                 Email = addStudentDto.Email,
                 PhoneNumber = addStudentDto.PhoneNumber,
-                DateOfBirth=addStudentDto.DateOfBirth,
-                Address=addStudentDto.Address
+                DateOfBirth = addStudentDto.DateOfBirth,
+                Address = addStudentDto.Address
             };
 
             _dbContext.Students.Add(studentEntity);
             await _dbContext.SaveChangesAsync();
 
             // Add student subjects
-            var studentSubjects = addStudentDto.SubjectIds.Select(subjectId => new StudentSubject
+            if (addStudentDto.SubjectIds != null && addStudentDto.SubjectIds.Any())
             {
-                Id = Guid.NewGuid(),
-                StudentId = studentEntity.Id,
-                SubjectId = subjectId
-            }).ToList();
+                var studentSubjects = addStudentDto.SubjectIds.Select(subjectId => new StudentSubject
+                {
+                    Id = Guid.NewGuid(),
+                    StudentId = studentEntity.Id,
+                    SubjectId = subjectId
+                }).ToList();
 
-            _dbContext.StudentSubjects.AddRange(studentSubjects);
+                _dbContext.StudentSubjects.AddRange(studentSubjects);
+                await _dbContext.SaveChangesAsync();
+            }
 
-            await _dbContext.SaveChangesAsync();
-
-            return new StudentResponse(true, "Student added successfully.");
+            return Ok(new StudentResponse(true, "Student added successfully."));
         }
 
-        [HttpPut]
-        public async Task<StudentResponse> UpdateStudents(AddUpdateStudent addStudentDto, Guid id)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateStudents(Guid id, AddUpdateStudent addStudentDto)
         {
             var record = await _dbContext.Students.FindAsync(id);
 
             if (record == null)
             {
-                return new StudentResponse(false, "Student not found.");
+                return NotFound(new StudentResponse(false, "Student not found."));
+            }
+
+            // Validate max 6 subjects
+            if (addStudentDto.SubjectIds != null && addStudentDto.SubjectIds.Count() > 6)
+            {
+                return BadRequest("A student cannot have more than 6 subjects.");
             }
 
             record.FirstName = addStudentDto.FirstName;
             record.LastName = addStudentDto.LastName;
             record.Email = addStudentDto.Email;
             record.PhoneNumber = addStudentDto.PhoneNumber;
+            record.DateOfBirth = addStudentDto.DateOfBirth;
+            record.Address = addStudentDto.Address;
 
             _dbContext.Students.Update(record);
             await _dbContext.SaveChangesAsync();
 
-          
             var existingSubjects = await _dbContext.StudentSubjects
                 .Where(ss => ss.StudentId == id)
                 .ToListAsync();
 
             var existingSubjectIds = existingSubjects.Select(ss => ss.SubjectId).ToHashSet();
-            var incomingSubjectIds = addStudentDto.SubjectIds.ToHashSet();
+            var incomingSubjectIds = addStudentDto.SubjectIds?.ToHashSet() ?? new HashSet<Guid>();
 
-            // If subjectid not in dto, delete
+            // Remove subjects that are not in the new list
             var subjectsToRemove = existingSubjects
                 .Where(ss => !incomingSubjectIds.Contains(ss.SubjectId))
                 .ToList();
             _dbContext.StudentSubjects.RemoveRange(subjectsToRemove);
 
-            //  If subject new, add
+            // Add new subjects not already assigned
             var subjectsToAdd = incomingSubjectIds
                 .Where(subjectId => !existingSubjectIds.Contains(subjectId))
                 .Select(subjectId => new StudentSubject
@@ -156,27 +169,25 @@ namespace StudentManagementSystem.Controllers
                 }).ToList();
             _dbContext.StudentSubjects.AddRange(subjectsToAdd);
 
-            // Save changes for subject updates
             await _dbContext.SaveChangesAsync();
 
-            return new StudentResponse(true, "Student updated successfully.");
+            return Ok(new StudentResponse(true, "Student updated successfully."));
         }
 
-
-        [HttpDelete]
-        public async Task<StudentResponse> DeleteStudents(Guid id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteStudents(Guid id)
         {
             var record = await _dbContext.Students.FindAsync(id);
 
             if (record == null)
             {
-                return new StudentResponse(false, "Student not found.");
+                return NotFound(new StudentResponse(false, "Student not found."));
             }
 
             _dbContext.Students.Remove(record);
             await _dbContext.SaveChangesAsync();
 
-            return new StudentResponse(true, "Student deleted successfully.");
+            return Ok(new StudentResponse(true, "Student deleted successfully."));
         }
     }
 }
