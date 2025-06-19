@@ -7,6 +7,6 @@
         public string Code { get; set; } = string.Empty;
 
         // navigation properties
-        public ICollection<StudentSubject> StudentSubjects { get; set; }
+        public ICollection<StudentSubject> StudentSubjects { get; set; } = new List<StudentSubject>();
     }
 }
