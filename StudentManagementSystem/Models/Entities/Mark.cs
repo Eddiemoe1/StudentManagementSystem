@@ -6,7 +6,6 @@ namespace StudentManagementSystem.Models.Entities
     {
         public Guid Id { get; set; }
         public Guid StudentSubjectId { get; set; }
-      
         public double TotalMark { get; set; }
 
         // Navigation properties

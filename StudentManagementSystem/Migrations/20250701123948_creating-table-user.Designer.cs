@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudentManagementSystem.Data;
 
@@ -11,9 +12,11 @@ using StudentManagementSystem.Data;
 namespace StudentManagementSystem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250701123948_creating-table-user")]
+    partial class creatingtableuser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,10 +74,6 @@ namespace StudentManagementSystem.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("StudentNo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.ToTable("Students");
@@ -92,16 +91,11 @@ namespace StudentManagementSystem.Migrations
                     b.Property<Guid>("SubjectId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("StudentId");
 
                     b.HasIndex("SubjectId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("StudentSubjects");
                 });
@@ -181,10 +175,6 @@ namespace StudentManagementSystem.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("StudentManagementSystem.Models.Entities.User", null)
-                        .WithMany("StudentSubjects")
-                        .HasForeignKey("UserId");
-
                     b.Navigation("Student");
 
                     b.Navigation("Subject");
@@ -196,11 +186,6 @@ namespace StudentManagementSystem.Migrations
                 });
 
             modelBuilder.Entity("StudentManagementSystem.Models.Entities.Subject", b =>
-                {
-                    b.Navigation("StudentSubjects");
-                });
-
-            modelBuilder.Entity("StudentManagementSystem.Models.Entities.User", b =>
                 {
                     b.Navigation("StudentSubjects");
                 });
