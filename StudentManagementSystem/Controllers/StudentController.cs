@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StudentManagementSystem.Data;
 using StudentManagementSystem.DTO.Student;
@@ -7,8 +8,9 @@ using StudentManagementSystem.Models.Entities;
 
 namespace StudentManagementSystem.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiVersion("1.0")]
     public class StudentController : Controller
     {
         private readonly ApplicationDbContext _dbContext;
