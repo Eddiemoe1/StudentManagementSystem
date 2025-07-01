@@ -1,13 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using StudentManagementSystem.Data;
 using StudentManagementSystem.DTO.Marks;
 using StudentManagementSystem.Models.Entities;
-using Microsoft.EntityFrameworkCore;
+
 
 namespace StudentManagementSystem.Controllers
 {
-    [Route("api/[controller]")]
+
     [ApiController]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiVersion("1.0")]
     public class MarksController : Controller
     {
         private readonly ApplicationDbContext _dbContext;
