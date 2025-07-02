@@ -31,7 +31,7 @@ namespace StudentManagementSystem.Controllers
                 return BadRequest("Email already exists.");
 
             if (await _context.Users.AnyAsync(u => u.StudentOrStaffNo == model.StudentOrStaffNo))
-                return BadRequest("StudentOrStaffNo already exists.");
+                return BadRequest("StudentOrStaffNo already exists.");  
 
             model.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.PasswordHash);
             _context.Users.Add(model);
@@ -48,6 +48,7 @@ namespace StudentManagementSystem.Controllers
                 return Unauthorized("Invalid email or password.");
 
             var token = GenerateJwtToken(user);
+
             return Ok(new { token });
         }
 
