@@ -24,7 +24,7 @@ namespace StudentManagementSystem.Data
                 .HasIndex(m => m.StudentSubjectId)
                 .IsUnique();
 
-            // Optional: configure StudentSubject relations if not done elsewhere
+            //StudentSubject relations
             modelBuilder.Entity<StudentSubject>()
                 .HasKey(ss => ss.Id);
 
@@ -38,7 +38,6 @@ namespace StudentManagementSystem.Data
                 .WithMany(su => su.StudentSubjects)
                 .HasForeignKey(ss => ss.SubjectId);
 
-            // You can add more configurations here as needed
         }
     }
 }
