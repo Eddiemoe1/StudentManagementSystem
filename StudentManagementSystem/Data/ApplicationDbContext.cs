@@ -37,7 +37,6 @@ namespace StudentManagementSystem.Data
                 .HasOne(ss => ss.Subject)
                 .WithMany(su => su.StudentSubjects)
                 .HasForeignKey(ss => ss.SubjectId);
-
         }
     }
 }
