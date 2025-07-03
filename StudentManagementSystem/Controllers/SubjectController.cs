@@ -51,6 +51,7 @@ namespace StudentManagementSystem.Controllers
             return Ok(subject);
         }
 
+
         [HttpPost]
         public async Task<SubjectResponse> AddSubject(AddUpdateSubjectDTO addSubjectDto)
         {
@@ -67,6 +68,7 @@ namespace StudentManagementSystem.Controllers
             return new SubjectResponse(true, "Subject added successfully.");
 
         }
+
 
         [HttpPut("{id}")]
         public async Task<SubjectResponse> UpdateSubjects(AddUpdateSubjectDTO addSubjectDto, Guid id)
