@@ -88,6 +88,8 @@ namespace StudentManagementSystem.Controllers
 
             return new SubjectResponse(true, "Subject updated successfully.");
         }
+
+
         [HttpDelete("{id}")]
         public async Task<SubjectResponse> DeleteSubjects(Guid id)
         {
