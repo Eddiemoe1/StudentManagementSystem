@@ -68,6 +68,7 @@ namespace StudentManagementSystem.Controllers
             return Ok(new { token });
         }
 
+
         private string GenerateJwtToken(User user)
         {
             var jwtSettings = _config.GetSection("JwtSettings");
