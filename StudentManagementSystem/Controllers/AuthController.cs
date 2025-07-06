@@ -92,6 +92,7 @@ namespace StudentManagementSystem.Controllers
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+
         }
     }
 
