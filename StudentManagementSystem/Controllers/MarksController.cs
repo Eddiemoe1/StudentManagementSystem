@@ -65,6 +65,7 @@ namespace StudentManagementSystem.Controllers
             if (mark == null)
                 return NotFound();
 
+
             return Ok(mark);
         }
 
@@ -84,6 +85,7 @@ namespace StudentManagementSystem.Controllers
             var duplicateMark = await _dbContext.Marks.AnyAsync(m => m.StudentSubjectId == addMarkDto.StudentSubjectId);
             if (duplicateMark)
                 return BadRequest("Mark for this StudentSubject already exists.");
+
 
             var mark = new Mark
             {
