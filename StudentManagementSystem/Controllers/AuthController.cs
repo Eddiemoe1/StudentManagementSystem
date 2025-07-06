@@ -7,12 +7,13 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Asp.Versioning;
+using StudentManagementSystem.DTO.Auth;
 
 
 namespace StudentManagementSystem.Controllers
 {
     [ApiController]
-    [Route("api/v{version:apiVersion}/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiVersion("1.0")]
     public class AuthController : ControllerBase
     {
@@ -26,16 +27,30 @@ namespace StudentManagementSystem.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] User model)
+        public async Task<IActionResult> Register([FromBody] RegisterUserDTO model)
         {
-            if (await _context.Users.AnyAsync(u => u.Email == model.Email))
-                return BadRequest("Email already exists.");
+            var passwordHash = BCrypt.Net.BCrypt.HashPassword(model.PasswordHash);
 
-            if (await _context.Users.AnyAsync(u => u.StudentOrStaffNo == model.StudentOrStaffNo))
-                return BadRequest("StudentOrStaffNo already exists.");  
+            var user = new User { 
+                Email = model.Email, 
+                UserName = model.Email, 
+                PasswordHash = passwordHash, 
+                Role = "Student", 
+                StudentOrStaffNo = "125689" 
+            };
+            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
+            if (existingUser != null)
+                return BadRequest("Check your credetials.");
 
-            model.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.PasswordHash);
-            _context.Users.Add(model);
+
+            //if (await _context.Users.AnyAsync(u => u.Email == model.Email))
+            //    return BadRequest("Email already exists.");
+
+          //  if (await _context.Users.AnyAsync(u => u.StudentOrStaffNo == model.StudentOrStaffNo))
+            //    return BadRequest("StudentOrStaffNo already exists.");  
+
+            
+            _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
             return Ok("User registered successfully.");

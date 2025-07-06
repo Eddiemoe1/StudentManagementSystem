@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StudentManagementSystem.Data;
@@ -8,9 +9,9 @@ using StudentManagementSystem.Models.Entities;
 
 namespace StudentManagementSystem.Controllers
 {
-
+    [Authorize]
     [ApiController]
-    [Route("api/v{version:apiVersion}/[controller]")]
+    [Route("api/{version:apiVersion}/[controller]")]
     [ApiVersion("1.0")]
     public class MarksController : Controller
     {
@@ -46,20 +47,20 @@ namespace StudentManagementSystem.Controllers
         public async Task<ActionResult<GetMarksDTO>> GetMarkById(Guid id)
         {
             var mark = await _dbContext.Marks
-                .Include(m => m.StudentSubject)
-                    .ThenInclude(ss => ss.Subject)
-                .Include(m => m.StudentSubject)
-                    .ThenInclude(ss => ss.Student)
-                .Where(m => m.Id == id)
-                .Select(m => new GetMarksDTO
-                {
-                    Id = m.Id,
-                    StudentSubjectId = m.StudentSubjectId,
-                    TotalMark = m.TotalMark,
-                    StudentName = m.StudentSubject.Student.FirstName + " " + m.StudentSubject.Student.LastName,
-                    SubjectName = m.StudentSubject.Subject.Name
-                })
-                .FirstOrDefaultAsync();
+                //.Include(m => m.StudentSubject)
+                //    .ThenInclude(ss => ss.Subject)
+                //.Include(m => m.StudentSubject)
+                //    .ThenInclude(ss => ss.Student)
+                //.Where(m => m.Id == id)
+                //.Select(m => new GetMarksDTO
+                //{
+                //    Id = m.Id,
+                //    StudentSubjectId = m.StudentSubjectId,
+                //    TotalMark = m.TotalMark,
+                //    StudentName = m.StudentSubject.Student.FirstName + " " + m.StudentSubject.Student.LastName,
+                //    SubjectName = m.StudentSubject.Subject.Name
+                //})
+                .FindAsync(id);
 
             if (mark == null)
                 return NotFound();
@@ -71,7 +72,7 @@ namespace StudentManagementSystem.Controllers
         public async Task<IActionResult> AddMark(CreateMarksDTO addMarkDto)
         {
             // Validate mark range
-            if (addMarkDto.TotalMark < 0 || addMarkDto.TotalMark > 100)
+            if (addMarkDto.TotalMark < 0 || addMarkDto.TotalMark >= 100)
                 return BadRequest("TotalMark must be between 0 and 100.");
 
             // Check if StudentSubject exists
