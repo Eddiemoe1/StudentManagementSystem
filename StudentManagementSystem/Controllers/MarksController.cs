@@ -44,6 +44,7 @@ namespace StudentManagementSystem.Controllers
             return Ok(marks);
         }
 
+
         [HttpGet("{id}")]
         public async Task<ActionResult<GetMarksDTO>> GetMarkById(Guid id)
         {
