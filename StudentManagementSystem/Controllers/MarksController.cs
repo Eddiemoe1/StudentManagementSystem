@@ -25,6 +25,7 @@ namespace StudentManagementSystem.Controllers
         [HttpGet]
         public async Task<ActionResult<List<GetMarksDTO>>> GetMarks()
         {
+
             var marks = await _dbContext.Marks
                 .Include(m => m.StudentSubject)
                     .ThenInclude(ss => ss.Subject)
@@ -47,24 +48,23 @@ namespace StudentManagementSystem.Controllers
         public async Task<ActionResult<GetMarksDTO>> GetMarkById(Guid id)
         {
             var mark = await _dbContext.Marks
-                //.Include(m => m.StudentSubject)
-                //    .ThenInclude(ss => ss.Subject)
-                //.Include(m => m.StudentSubject)
-                //    .ThenInclude(ss => ss.Student)
-                //.Where(m => m.Id == id)
-                //.Select(m => new GetMarksDTO
-                //{
-                //    Id = m.Id,
-                //    StudentSubjectId = m.StudentSubjectId,
-                //    TotalMark = m.TotalMark,
-                //    StudentName = m.StudentSubject.Student.FirstName + " " + m.StudentSubject.Student.LastName,
-                //    SubjectName = m.StudentSubject.Subject.Name
-                //})
-                .FindAsync(id);
+                .Where(m => m.Id == id)
+                .Include(m => m.StudentSubject)
+                    .ThenInclude(ss => ss.Subject)
+                .Include(m => m.StudentSubject)
+                    .ThenInclude(ss => ss.Student)
+                .Select(m => new GetMarksDTO
+                {
+                    Id = m.Id,
+                    StudentSubjectId = m.StudentSubjectId,
+                    TotalMark = m.TotalMark,
+                    StudentName = m.StudentSubject.Student.FirstName + " " + m.StudentSubject.Student.LastName,
+                    SubjectName = m.StudentSubject.Subject.Name
+                })
+                .FirstOrDefaultAsync();
 
             if (mark == null)
                 return NotFound();
-
 
             return Ok(mark);
         }
