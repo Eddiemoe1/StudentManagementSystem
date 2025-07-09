@@ -8,7 +8,7 @@ using StudentManagementSystem.Models.Entities;
 namespace StudentManagementSystem.Controllers
 {
     [ApiController]
-    [Route("api/v{version:apiVersion}/[controller]")]
+    [Route("api/V1/[controller]")]
     [ApiVersion("1.0")]
     public class SubjectController : ControllerBase
     {

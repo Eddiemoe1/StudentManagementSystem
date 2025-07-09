@@ -12,7 +12,6 @@ using StudentManagementSystem.DTO.Auth;
 
 namespace StudentManagementSystem.Controllers
 {
-
     [ApiController]
     [Route("api/v1/[controller]")]
     [ApiVersion("1.0")]

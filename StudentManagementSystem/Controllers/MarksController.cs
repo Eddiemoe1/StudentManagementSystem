@@ -11,7 +11,7 @@ namespace StudentManagementSystem.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/{version:apiVersion}/[controller]")]
+    [Route("api/V1/[controller]")]
     [ApiVersion("1.0")]
     public class MarksController : Controller
     {
