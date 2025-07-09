@@ -82,7 +82,7 @@ namespace StudentManagementSystem.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddStudent(AddUpdateStudent addStudentDto)
+        public async Task<IActionResult> AddStudent(AddUpdateStudentDTO addStudentDto)
         {
             // Validate max 6 subjects
             if (addStudentDto.SubjectIds != null && addStudentDto.SubjectIds.Count() > 6)
@@ -122,7 +122,7 @@ namespace StudentManagementSystem.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateStudents(Guid id, AddUpdateStudent addStudentDto)
+        public async Task<IActionResult> UpdateStudents(Guid id, AddUpdateStudentDTO addStudentDto)
         {
             var record = await _dbContext.Students.FindAsync(id);
 

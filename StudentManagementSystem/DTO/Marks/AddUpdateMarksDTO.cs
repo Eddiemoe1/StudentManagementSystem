@@ -1,6 +1,6 @@
 ﻿namespace StudentManagementSystem.DTO.Marks
 {
-    public class AddUpdateMarks
+    public class AddUpdateMarksDTO
     {
         public Guid StudentSubjectId { get; set; }
 

@@ -29,4 +29,8 @@
     <ContainerPort Include="8081" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="DTO\Marks\AddUpdateMarksDTO.cs" />
+  </ItemGroup>
+
 </Project>
