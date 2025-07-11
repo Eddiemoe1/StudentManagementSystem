@@ -104,6 +104,12 @@ namespace StudentManagementSystem.Controllers
             _dbContext.Students.Add(studentEntity);
             await _dbContext.SaveChangesAsync();
 
+            //validate if student is added
+            if (studentEntity.Id == Guid.Empty)
+            {
+                return BadRequest(new StudentResponse(false, "Failed to add student."));
+            }
+
             // Add student subjects
             if (addStudentDto.SubjectIds != null && addStudentDto.SubjectIds.Any())
             {
