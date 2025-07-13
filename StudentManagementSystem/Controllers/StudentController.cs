@@ -160,6 +160,12 @@ namespace StudentManagementSystem.Controllers
             var existingSubjectIds = existingSubjects.Select(ss => ss.SubjectId).ToHashSet();
             var incomingSubjectIds = addStudentDto.SubjectIds?.ToHashSet() ?? new HashSet<Guid>();
 
+            // Ensure incomingSubjectIds is not null to avoid NullReferenceException
+            if (incomingSubjectIds == null)
+            {
+                incomingSubjectIds = new HashSet<Guid>();
+            }
+            
             // Remove subjects that are not in the new list
             var subjectsToRemove = existingSubjects
                 .Where(ss => !incomingSubjectIds.Contains(ss.SubjectId))
@@ -199,3 +205,4 @@ namespace StudentManagementSystem.Controllers
         }
     }
 }
+
