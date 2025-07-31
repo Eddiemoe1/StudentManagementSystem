@@ -8,5 +8,8 @@
         // navigation properties
         public ICollection<StudentSubject> StudentSubjects { get; set; } = new List<StudentSubject>();
 
+        //where are your APIs?
+        //natumia visual studio
+
     }
 }

@@ -29,12 +29,12 @@ namespace StudentManagementSystem.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterUserDTO model)
         {
-            var passwordHash = BCrypt.Net.BCrypt.HashPassword(model.PasswordHash);
+            var passwordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
             var user = new User { 
                 Email = model.Email, 
                 UserName = model.Email, 
-                PasswordHash = passwordHash, 
+                Password = password, 
                 Role = "Student", 
                 StudentOrStaffNo = "125689" 
             };
