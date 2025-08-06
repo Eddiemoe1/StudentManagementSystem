@@ -9,6 +9,10 @@
         public string PhoneNumber { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
 
+        public string status { get; set; } = string.Empty;
+
+        public string EnrollmentDate {  get; set; } = string.Empty;
+
         // List of subjects
         public List<Guid> SubjectIds { get; set; } = new List<Guid>();
     }

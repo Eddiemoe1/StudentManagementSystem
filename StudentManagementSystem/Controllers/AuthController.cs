@@ -9,7 +9,6 @@ using System.Text;
 using Asp.Versioning;
 using StudentManagementSystem.DTO.Auth;
 
-
 namespace StudentManagementSystem.Controllers
 {
     [ApiController]
@@ -29,27 +28,24 @@ namespace StudentManagementSystem.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterUserDTO model)
         {
-            var passwordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
+            var passwordHash = BCrypt.Net.BCrypt.HashPassword(model.PasswordHash);
+            if (model.PasswordHash != model.ConfirmPassword)
+           return BadRequest("Passwords do not match.");
 
-            var user = new User { 
-                Email = model.Email, 
-                UserName = model.Email, 
-                Password = password, 
-                Role = "Student", 
-                StudentOrStaffNo = "125689" 
-            };
+            var user = new User
+                {
+                    Email = model.Email,
+                    UserName = model.FirstName + " " + model.LastName,
+                    PasswordHash = passwordHash,
+                    Role = model.Role,
+                    StudentOrStaffNo = model.Id
+                };
+
+
             var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
             if (existingUser != null)
-                return BadRequest("Check your credetials.");
+                return BadRequest("Check your credentials.");
 
-
-            //if (await _context.Users.AnyAsync(u => u.Email == model.Email))
-            //    return BadRequest("Email already exists.");
-
-          //  if (await _context.Users.AnyAsync(u => u.StudentOrStaffNo == model.StudentOrStaffNo))
-            //    return BadRequest("StudentOrStaffNo already exists.");  
-
-            
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
@@ -65,13 +61,35 @@ namespace StudentManagementSystem.Controllers
 
             var token = GenerateJwtToken(user);
 
-            return Ok(new { token });
+            return Ok(new
+                {
+                    token,
+                    user = new
+                    {
+                        id = user.Id,
+                        email = user.Email,
+                        username = user.UserName,
+                        role = user.Role,
+                    }
+                });
+
+
         }
 
         private string GenerateJwtToken(User user)
         {
             var jwtSettings = _config.GetSection("JwtSettings");
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]));
+
+            var keyString = jwtSettings["Key"]
+                ?? throw new InvalidOperationException("JWT key is not configured in appsettings.");
+
+            var issuer = jwtSettings["Issuer"]
+                ?? throw new InvalidOperationException("JWT issuer is not configured.");
+
+            var audience = jwtSettings["Audience"]
+                ?? throw new InvalidOperationException("JWT audience is not configured.");
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyString));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
@@ -83,17 +101,17 @@ namespace StudentManagementSystem.Controllers
             };
 
             var token = new JwtSecurityToken(
-                issuer: jwtSettings["Issuer"],
-                audience: jwtSettings["Audience"],
+                issuer: issuer,
+                audience: audience,
                 claims: claims,
                 expires: DateTime.UtcNow.AddHours(1),
                 signingCredentials: creds
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
-
         }
     }
+
     public class LoginRequest
     {
         public string Email { get; set; } = string.Empty;

@@ -11,6 +11,10 @@
         public string PhoneNumber { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
 
+        public string status { get; set; } = string.Empty;
+
+        public string EnrollmentDate {  get; set; } = string.Empty;
+
 
         // navigation properties
         public ICollection<StudentSubject> StudentSubjects { get; set; } = new List<StudentSubject>();
