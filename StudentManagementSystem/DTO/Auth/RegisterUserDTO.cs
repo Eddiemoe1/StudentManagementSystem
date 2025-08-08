@@ -5,7 +5,7 @@ namespace StudentManagementSystem.DTO.Auth
     public class RegisterUserDTO
     {
         public string Email { get; set; } = string.Empty;
-        public string PasswordHash { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
 
         [JsonPropertyName("confirmPassword")]
         public string ConfirmPassword { get; set; } = string.Empty;

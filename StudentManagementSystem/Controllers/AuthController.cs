@@ -28,15 +28,15 @@ namespace StudentManagementSystem.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterUserDTO model)
         {
-            var passwordHash = BCrypt.Net.BCrypt.HashPassword(model.PasswordHash);
-            if (model.PasswordHash != model.ConfirmPassword)
+            var password = BCrypt.Net.BCrypt.HashPassword(model.Password);
+            if (model.Password != model.ConfirmPassword)
            return BadRequest("Passwords do not match.");
 
             var user = new User
                 {
                     Email = model.Email,
                     UserName = model.FirstName + " " + model.LastName,
-                    PasswordHash = passwordHash,
+                    Password = password,
                     Role = model.Role,
                     StudentOrStaffNo = model.Id
                 };
@@ -53,28 +53,35 @@ namespace StudentManagementSystem.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+public async Task<IActionResult> Login([FromBody] LoginRequest request)
+{
+    var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+
+    if (user == null)
+    {
+        return Unauthorized(new { message = "Email not found" });
+    }
+
+    if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
+    {
+        return Unauthorized(new { message = "Password mismatch" });
+    }
+
+    var token = GenerateJwtToken(user);
+
+    return Ok(new
+    {
+        token,
+        user = new
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
-            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
-                return Unauthorized("Invalid email or password.");
-
-            var token = GenerateJwtToken(user);
-
-            return Ok(new
-                {
-                    token,
-                    user = new
-                    {
-                        id = user.Id,
-                        email = user.Email,
-                        username = user.UserName,
-                        role = user.Role,
-                    }
-                });
-
-
+            id = user.Id,
+            email = user.Email,
+            username = user.UserName,
+            role = user.Role,
         }
+    });
+}
+
 
         private string GenerateJwtToken(User user)
         {

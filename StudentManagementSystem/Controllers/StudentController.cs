@@ -32,8 +32,8 @@ namespace StudentManagementSystem.Controllers
                     s.PhoneNumber,
                     s.DateOfBirth,
                     s.Address,
-                    EnrollmentDate = s.Id.ToString().Substring(0, 10), // Placeholder if not in model
-                    Status = "active" // Placeholder if not in model
+                    EnrollmentDate = s.Id.ToString().Substring(0, 10), 
+                    Status = "active" 
                 })
                 .ToListAsync();
 
