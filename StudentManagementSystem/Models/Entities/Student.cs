@@ -13,7 +13,8 @@
 
         public string status { get; set; } = string.Empty;
 
-        public string EnrollmentDate {  get; set; } = string.Empty;
+        public DateTime? EnrollmentDate { get; set; }
+       
 
 
         // navigation properties

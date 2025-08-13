@@ -33,12 +33,11 @@ namespace StudentManagementSystem.Controllers
            return BadRequest("Passwords do not match.");
 
             var user = new User
-                {
-                    Email = model.Email,
-                    UserName = model.FirstName + " " + model.LastName,
-                    Password = password,
-                    Role = model.Role,
-                    StudentOrStaffNo = model.Id
+            {
+                Email = model.Email,
+                UserName = model.FirstName + " " + model.LastName,
+                Password = password,
+                Role = model.Role,
                 };
 
 
@@ -103,7 +102,6 @@ public async Task<IActionResult> Login([FromBody] LoginRequest request)
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role),
                 new Claim("StudentOrStaffNo", user.StudentOrStaffNo)
             };
 

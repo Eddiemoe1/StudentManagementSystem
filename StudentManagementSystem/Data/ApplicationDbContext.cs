@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StudentManagementSystem.Models.Entities;
-using YourNamespace.Models;
+using StudentManagementSystem.Models;
 // using StudentManagementSystem.Models;
 
 namespace StudentManagementSystem.Data
@@ -16,7 +16,7 @@ namespace StudentManagementSystem.Data
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<Mark> Marks { get; set; }
         public DbSet<StudentSubject> StudentSubjects { get; set; }
-        public DbSet<Staff> Staff { get; set; }
+        public DbSet<Staff> Staffs { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

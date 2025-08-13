@@ -91,15 +91,38 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+else
+{
+    app.UseExceptionHandler(errorApp =>
+    {
+        errorApp.Run(async context =>
+        {
+            context.Response.StatusCode = 500;
+            context.Response.ContentType = "application/json";
+
+            var errorFeature = context.Features.Get<Microsoft.AspNetCore.Diagnostics.IExceptionHandlerFeature>();
+            if (errorFeature != null)
+            {
+                var ex = errorFeature.Error;
+
+                var err = new
+                {
+                    message = "An unexpected error occurred.",   
+                };
+
+                await context.Response.WriteAsJsonAsync(err);
+            }
+        });
+    });
+}
 
 app.UseHttpsRedirection();
-
 
 app.UseCors("AllowFrontend");
 
@@ -109,3 +132,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+

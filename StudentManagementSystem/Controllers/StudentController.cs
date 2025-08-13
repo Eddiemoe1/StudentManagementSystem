@@ -32,14 +32,13 @@ namespace StudentManagementSystem.Controllers
                     s.PhoneNumber,
                     s.DateOfBirth,
                     s.Address,
-                    EnrollmentDate = s.Id.ToString().Substring(0, 10), 
+                    s.EnrollmentDate,
                     Status = "active" 
                 })
                 .ToListAsync();
 
             return Ok(students);
         }
-
         // POST: api/Students
         [HttpPost]
         public async Task<IActionResult> AddStudent(StudentDTO dto)
@@ -53,7 +52,9 @@ namespace StudentManagementSystem.Controllers
                 DateOfBirth = dto.DateOfBirth,
                 Email = dto.Email,
                 PhoneNumber = dto.PhoneNumber,
-                Address = dto.Address
+                Address = dto.Address,
+                EnrollmentDate = DateTime.UtcNow
+
             };
 
             _context.Students.Add(student);
