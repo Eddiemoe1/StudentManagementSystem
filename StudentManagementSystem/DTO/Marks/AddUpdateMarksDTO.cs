@@ -7,3 +7,5 @@
         public double TotalMark { get; set; }
     }
 }
+
+
