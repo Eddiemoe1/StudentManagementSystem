@@ -21,3 +21,4 @@ namespace StudentManagementSystem.Models.Entities
 
     }
 }
+
