@@ -11,7 +11,7 @@ namespace StudentManagementSystem.Models.Entities
         //navigation properties
         [ForeignKey(nameof(StudentId))]
         public Student Student { get; set; } = new Student();
-        
+
         [ForeignKey(nameof(SubjectId))]
         public Subject Subject { get; set; } = new Subject();
     }
